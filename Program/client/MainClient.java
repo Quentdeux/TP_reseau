@@ -22,6 +22,7 @@ public class MainClient {
             e.printStackTrace();
         }
     }
+
     private static void printUsage() {
         System.out.println("java client.Client <address> <port>");
         System.out.println("\t<address>: server's ip address");

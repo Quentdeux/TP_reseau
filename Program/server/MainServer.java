@@ -2,10 +2,7 @@ package server;
 import java.io.IOException;
 
 public class MainServer {
-    /**
-     * creates a new server
-     * @param args
-     */
+
     public static void main(String[] args) {
         try {
             if (args.length != 1) {

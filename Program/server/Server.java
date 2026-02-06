@@ -39,7 +39,6 @@ public class Server {
         discClient.closeClient();
         this.clients.remove(discClient);
         broadcastMessage(new Message(String.valueOf(discClient.getId()), "Vient de se déconnecter"), discClient.getId());
-
     }
 
     public int getPort() {
