@@ -2,15 +2,12 @@ package server;
 
 import common.Message;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class ConnectedClient implements Runnable {
     static int idCounter = 0;
-    int id;
+    private int id;
 
     Server server;
     Socket socket;
@@ -18,32 +15,39 @@ public class ConnectedClient implements Runnable {
     ObjectOutputStream out;
     ObjectInputStream in;
 
-    public void ConnectedClient (Server Server, Socket Socket) {
+    public ConnectedClient (Server Server, Socket Socket) throws IOException {
         server = Server;
         socket = Socket;
         id = idCounter++;
-
         out = new ObjectOutputStream(socket.getOutputStream());
 
         System.out.println("Nouvelle connexion, id = " + id);
     }
 
+    public void setId(int Id) {
+        id = Id;
+    }
+
     @Override
     public void run() {
-        in = new ObjectInputStream(socket.getInputStream());
-        boolean isActive = true;
-        while (isActive) {
-            try {
+        try {
+            System.out.println(socket);
+
+            // Crash ici, cherché mais pas trouvé pourquoi
+            in = new ObjectInputStream(socket.getInputStream());
+
+            boolean isActive = true;
+            while (isActive) {
                 Message mess = (Message) in.readObject();
                 mess.setSender(String.valueOf(id));
                 server.broadcastMessage(mess, id);
                 server.disconnectedClient(this);
                 isActive = false;
             }
-            catch (Exception ex) {
-            }
-            catch (EOFException ex) {
-            }
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -56,5 +60,9 @@ public class ConnectedClient implements Runnable {
         this.in.close();
         this.out.close();
         this.socket.close();
+    }
+
+    int getId() {
+        return id;
     }
 }

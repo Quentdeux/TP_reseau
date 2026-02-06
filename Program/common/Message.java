@@ -8,12 +8,16 @@ public class Message implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
-    public void Message (String Sender, String Content) {
+    public Message(String Sender, String Content) {
         sender = Sender;
         content = Content;
     }
 
     public String toString() {
         return sender + ";" + content;
+    }
+
+    public void setSender(String Sender) {
+        sender = Sender;
     }
 }

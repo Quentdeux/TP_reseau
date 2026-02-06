@@ -1,12 +1,14 @@
 package server;
 
+import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 public class Connection implements Runnable {
     Server server;
     ServerSocket serverSocket;
 
-    public Connection(Server Server) {
+    public Connection(Server Server) throws IOException {
         server = Server;
         this.serverSocket = new ServerSocket(server.getPort());
     }
@@ -14,16 +16,20 @@ public class Connection implements Runnable {
     @Override
     public void run() {
         while(true) {
-            Socket socketNewClient = serverSocket.accept();
-            ConnectedClient newClient = new ConnectedClient(server, sockNewClient);
-            newClient.setId(server.getNumClients());
-            server.addClient(newClient);
-
             try {
-                Thread threadNewClient = new Thread(newClient);
-                threadNewClient.start();
-            }
-            catch (Exception ex) {
+                Socket socketNewClient = serverSocket.accept();
+                ConnectedClient newClient = new ConnectedClient(server, socketNewClient);
+                newClient.setId(server.getNumClients());
+                server.addClient(newClient);
+                try {
+                    Thread threadNewClient = new Thread(newClient);
+                    threadNewClient.start();
+                }
+                catch (Exception ex) {
+                }
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
 
 
